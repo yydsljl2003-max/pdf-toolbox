@@ -40,7 +40,10 @@ class PdfMerger {
                 return MergeResult(success = false, errorMessage = "All PDF files have no valid pages")
             }
 
-            // Step 2: Create merged PDF document (Letter size: 612x792 pts)
+            // Get device DPI for resolution-aware rendering
+            val deviceDpi = context.resources.displayMetrics.densityDpi
+
+            // Step 2: Create merged PDF document
             val mergedDoc = PdfDocument()
 
             // Step 3: Render each source page into merged document
@@ -55,12 +58,16 @@ class PdfMerger {
                 for (pageIndex in 0 until renderer.pageCount) {
                     val sourcePage = renderer.openPage(pageIndex)
 
-                    // Render source page to bitmap
-                    val bitmap = Bitmap.createBitmap(612, 792, Bitmap.Config.ARGB_8888)
+                    // Calculate render resolution from native page size and device DPI
+                    val renderWidth = (sourcePage.width * deviceDpi) / 72
+                    val renderHeight = (sourcePage.height * deviceDpi) / 72
+
+                    // Render source page to bitmap at native resolution
+                    val bitmap = Bitmap.createBitmap(renderWidth, renderHeight, Bitmap.Config.ARGB_8888)
                     sourcePage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
-                    // Create a new page with unique pageNum
-                    val pageInfo = PdfDocument.PageInfo.Builder(612, 792, currentPageIndex + 1).create()
+                    // Create a new page matching the source page dimensions
+                    val pageInfo = PdfDocument.PageInfo.Builder(renderWidth, renderHeight, currentPageIndex + 1).create()
                     val page = mergedDoc.startPage(pageInfo)
                     val canvas = page.canvas
                     canvas.drawColor(android.graphics.Color.WHITE)

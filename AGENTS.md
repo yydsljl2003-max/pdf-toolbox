@@ -61,7 +61,7 @@
   pathlib.Path("完整路径").write_text("""文件内容""", encoding="utf-8")
 
 - **修改已有文件**：优先使用 `apply_patch` 生成 unified diff，只改目标行
-- **禁止**：使用 PowerShell `Out-File` 或 `>` 重定向写入 `.kt`、`.kts`、`.xml` 文件
+- **禁止**：使用 PowerShell `Out-File` 或 `>` 重定向写入 `.kt`、`.kts`、`.xml` 等文件，禁止使用Powershell写文件
 
 ## 禁止项
 
