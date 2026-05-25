@@ -1,4 +1,4 @@
-﻿# PDF Adder
+# PDF Adder
 
 > 一款 Android 应用，支持选择多个 PDF 文件、拖拽排序后合并为单个 PDF。
 
@@ -25,7 +25,8 @@ Release 版本 APK 存放在项目的 `releases/` 文件夹下：
 
 | 文件 | 说明 |
 |---|---|
-| `releases/PDF-Adder-v1.0.apk` | 当前发布版本 |
+| `releases/PDF-Adder-v1.1.apk` | 当前发布版本（修复 PDF 合并模糊问题） |
+| `releases/PDF-Adder-v1.0.apk` | v1.0 历史版本 |
 
 下载后直接在 Android 设备上安装即可使用。
 
