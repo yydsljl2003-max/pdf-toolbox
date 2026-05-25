@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <!-- 拖拽手柄 -->
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:contentDescription="拖拽排序"
+        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:tint="@color/pdf_gray_text" />
+
+    <!-- 文件名 -->
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/pdf_black"
+        android:textSize="18sp" />
+
+    <!-- 页数 -->
+    <TextView
+        android:id="@+id/tvPageCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/pdf_blue"
+        android:backgroundTint="@color/pdf_blue"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/pdf_white"
+        android:textSize="14sp" />
+
+</LinearLayout>

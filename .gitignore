@@ -1,0 +1,55 @@
+﻿# Build outputs
+build/
+*/build/
+out/
+*/out/
+
+# 但保留 APK / AAB
+!*.apk
+!**/outputs/apk/**/*.apk
+!**/outputs/bundle/**/*.apk
+!**/outputs/bundle/**/*.aab
+
+# Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.gradle/
+local.properties
+*.log
+
+# Generated files
+*.dex
+*.ap_
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp / scratch
+*.tmp
+*.swp
+*.swo
+*~
+
+# Debug / test artifacts
+pdf_debug.txt
+screenshot.png
+merged_*.pdf
+source_sample.pdf
+
+# Python scripts used for generation
+_gen_agents.py
+_gen_agents_b64.txt
+_test_write.py
+_write_agents.py
+_write_files.py
+
+# Android test runner
+androidTest.apk
+
+# Keystore (敏感，忽略)
+*.jks
+*.keystore
