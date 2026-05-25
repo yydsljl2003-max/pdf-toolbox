@@ -122,7 +122,10 @@ class MergeActivity : AppCompatActivity() {
             onItemMove = { from, to ->
                 viewModel.repositionFiles(from, to)
             },
-            onItemClick = {}
+            onItemClick = {},
+            onItemRemove = { position ->
+                viewModel.removeFile(position)
+            }
         )
         binding.recyclerViewFiles.apply {
             layoutManager = LinearLayoutManager(this@MergeActivity)
@@ -178,6 +181,10 @@ class MergeActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.btnSelectFiles.setOnClickListener {
+            openFilesLauncher.launch(arrayOf("application/pdf"))
+        }
+
+        binding.cardAddFile.setOnClickListener {
             openFilesLauncher.launch(arrayOf("application/pdf"))
         }
 

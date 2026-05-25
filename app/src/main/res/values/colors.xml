@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="pdf_black">#1A1A2E</color>
-    <color name="pdf_blue">#2196F3</color>
-    <color name="pdf_blue_dark">#1976D2</color>
-    <color name="pdf_white">#FFFFFF</color>
-    <color name="pdf_gray_light">#F5F5F5</color>
-    <color name="pdf_gray_text">#757575</color>
-    <color name="pdf_green">#4CAF50</color>
-    <color name="pdf_red">#F44336</color>
+    <color name="pdf_black">#2C2C34</color>
+    <color name="pdf_blue">#5C86CE</color>
+    <color name="pdf_blue_dark">#4A6FA5</color>
+    <color name="pdf_white">#FAFAF8</color>
+    <color name="pdf_gray_light">#F0EDE8</color>
+    <color name="pdf_gray_text">#8A8A96</color>
+    <color name="pdf_green">#6BAF6B</color>
+    <color name="pdf_red">#D97373</color>
+    <color name="pdf_card_bg">#FFFFFF</color>
+    <color name="pdf_card_border">#E8E4DF</color>
+    <color name="pdf_icon_bg">#EDEAF5</color>
 </resources>

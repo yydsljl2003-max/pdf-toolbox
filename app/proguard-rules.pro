@@ -1,1 +1,1 @@
-﻿@rules\n
+# ProGuard rules for PDF Adder app

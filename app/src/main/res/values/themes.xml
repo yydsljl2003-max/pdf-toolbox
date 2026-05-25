@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PdfAdder" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryDark">#1976D2</item>
-        <item name="colorAccent">#2196F3</item>
+    <style name="Theme.PdfAdder" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/pdf_blue</item>
+        <item name="colorPrimaryVariant">@color/pdf_blue_dark</item>
+        <item name="colorOnPrimary">@color/pdf_white</item>
+        <item name="colorSecondary">@color/pdf_green</item>
+        <item name="colorSecondaryVariant">@color/pdf_green</item>
+        <item name="colorOnSecondary">@color/pdf_white</item>
+        <item name="android:colorBackground">@color/pdf_gray_light</item>
+        <item name="colorSurface">@color/pdf_white</item>
+        <item name="colorError">@color/pdf_red</item>
+        <item name="android:windowBackground">@color/pdf_gray_light</item>
+        <item name="materialButtonStyle">@style/Widget.PdfAdder.Button</item>
+    </style>
+    <style name="Widget.PdfAdder.Button" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">8dp</item>
     </style>
 </resources>

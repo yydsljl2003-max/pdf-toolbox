@@ -46,22 +46,39 @@
 ## 构建配置提示
 
 - **最低 SDK**：24。**编译 SDK**：34。
-
 - **ProGuard**：`app` 模块 Release 构建启用；库模块使用 consumer rules。
-
 - **Maven 镜像**：已配置阿里云镜像。除非遇到网络问题，请保持。
 
-  
+## 本地环境路径
 
-## 文件写入规则
+- JDK 17：`D:\java版本\jdk\jdk-17.0.12_windows-x64_bin\jdk-17.0.12`
+- Android SDK：`C:\Users\lijiale\AppData\Local\Android\Sdk`
+- 构建前设置：`$env:JAVA_HOME = "JDK路径"; .\gradlew assembleDebug`
 
-- **新建文件**：使用 Python 脚本写入，编码 UTF-8 无 BOM
+## 文件操作规则
+
+- **新建文件**：使用 Python 脚本写入，确保 UTF-8 编码无 BOM
+
   ```python
   import pathlib
   pathlib.Path("完整路径").write_text("""文件内容""", encoding="utf-8")
+  ```
 
 - **修改已有文件**：优先使用 `apply_patch` 生成 unified diff，只改目标行
-- **禁止**：使用 PowerShell `Out-File` 或 `>` 重定向写入 `.kt`、`.kts`、`.xml` 等文件，禁止使用Powershell写文件
+
+  - 绝对禁止用 PowerShell 的 `Out-File` 或 `>` 重定向写入代码文件
+  - 禁止用 `Set-Content` 写入 .kt / .kts / .xml 文件
+  - 如果无法使用 `apply_patch`，直接把修改后的完整文件内容贴出来，让用户手动替换
+
+- **读取文件**：使用 Python 脚本读取，确保正确处理 UTF-8 编码
+
+  ```python
+  import pathlib
+  content = pathlib.Path("完整路径").read_text(encoding="utf-8")
+  print(content)
+  ```
+
+​	禁止：使用 PowerShell 的 Get-Content 或 cat 读取 .kt、.kts、.xml 文件（会导致中文乱码）
 
 ## 禁止项
 

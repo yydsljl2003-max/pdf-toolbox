@@ -1,70 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/pdf_gray_light"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <!-- 返回按钮 -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="start"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="返回"
-        android:padding="8dp"
-        android:src="@android:drawable/ic_menu_revert" />
-
-    <!-- 选择文件大按钮 -->
-    <Button
-        android:id="@+id/btnSelectFiles"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginTop="32dp"
-        android:text="📂 选择PDF文件"
-        android:textAllCaps="false"
-        android:textColor="@color/pdf_white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <!-- 文件列表 -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFiles"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/pdf_white"
-        android:clipToPadding="false"
-        android:padding="8dp" />
+        android:elevation="4dp">
 
-    <!-- 文件计数提示 -->
-    <TextView
-        android:id="@+id/tvFileCount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="未选择文件"
-        android:textColor="@color/pdf_gray_text"
-        android:textSize="16sp" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:title=""
+            app:titleTextColor="@color/pdf_black" />
 
-    <!-- 合并按钮 -->
-    <Button
-        android:id="@+id/btnMerge"
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="back"
+            android:src="@android:drawable/ic_menu_revert"
+            android:tint="@color/pdf_black" />
+
+    </FrameLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/pdf_green"
-        android:enabled="false"
-        android:text="🔗 合并为1个PDF"
-        android:textAllCaps="false"
-        android:textColor="@color/pdf_white"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAddFile"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/pdf_white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/pdf_card_border">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:contentDescription="add"
+                        android:src="@android:drawable/ic_input_add"
+                        android:tint="@color/pdf_blue" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="添加 PDF 文件"
+                        android:textColor="@color/pdf_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:id="@+id/btnSelectFiles"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewFiles"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:background="@color/pdf_white"
+                android:clipToPadding="false"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/tvFileCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="请选拙PDF文件"
+                android:textColor="@color/pdf_gray_text"
+                android:textSize="18sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMerge"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:enabled="false"
+                android:text="开始合并"
+                android:textAllCaps="false"
+                android:textColor="@color/pdf_white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                app:backgroundTint="@color/pdf_gray_text" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

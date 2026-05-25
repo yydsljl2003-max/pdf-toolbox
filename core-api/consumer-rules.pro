@@ -1,1 +1,1 @@
-﻿@rules\n
+# Consumer rules for core-api library

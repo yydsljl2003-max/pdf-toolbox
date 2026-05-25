@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pdf_black">#2C2C34</color>
+    <color name="pdf_blue">#5C86CE</color>
+    <color name="pdf_blue_dark">#4A6FA5</color>
+    <color name="pdf_white">#FAFAF8</color>
+    <color name="pdf_gray_light">#F0EDE8</color>
+    <color name="pdf_gray_text">#8A8A96</color>
+    <color name="pdf_green">#6BAF6B</color>
+    <color name="pdf_red">#D97373</color>
+</resources>
