@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-
-    <application>
-        <activity
-            android:name=".ui.MergeActivity"
-            android:exported="false"
-            android:label="合并PDF"
-            android:theme="@style/Theme.PdfAdder.Merge" />
-    </application>
+    <uses-sdk android:minSdkVersion="21" />
 
 </manifest>

@@ -1,15 +1,16 @@
 package com.pdfadder.feature.merge.pdf
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.pdf.PdfDocument
-import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
+import com.artifex.mupdf.fitz.Document
+import com.artifex.mupdf.fitz.PDFDocument
 import com.pdfadder.core.model.PdfFile
 import com.pdfadder.core.model.MergeResult
-import java.io.IOException
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 
 class PdfMerger {
     companion object {
@@ -21,77 +22,57 @@ class PdfMerger {
         outputUri: Uri,
         context: Context
     ): MergeResult {
+        if (pdfFiles.isEmpty()) {
+            return MergeResult(success = false, errorMessage = "No files to merge")
+        }
+
+        Log.d(TAG, "=== PdfMerger START: ${pdfFiles.size} files ===")
+
+        // Initialize MuPDF native context (idempotent)
+        com.artifex.mupdf.fitz.Context.init()
+
+        val tempFiles = mutableListOf<File>()
+        var newDoc: PDFDocument? = null
+
         try {
-            if (pdfFiles.isEmpty()) {
-                return MergeResult(success = false, errorMessage = "No files to merge")
-            }
+            // Create new empty PDF document using in-memory store
+            newDoc = PDFDocument()
 
-            Log.d(TAG, "=== PdfMerger START: " + pdfFiles.size + " files ===")
-
-            // Step 1: Count total pages across all files
-            var totalPages = 0
-            pdfFiles.forEach { pdfFile ->
-                val pageCount = getPageCount(pdfFile.uri, context)
-                totalPages += pageCount
-            }
-            Log.d(TAG, "    total pages: " + totalPages)
-
-            if (totalPages == 0) {
-                return MergeResult(success = false, errorMessage = "All PDF files have no valid pages")
-            }
-
-            // Get device DPI for resolution-aware rendering
-            val deviceDpi = context.resources.displayMetrics.densityDpi
-
-            // Step 2: Create merged PDF document
-            val mergedDoc = PdfDocument()
-
-            // Step 3: Render each source page into merged document
-            var currentPageIndex = 0
+            var totalPageCount = 0
             pdfFiles.forEachIndexed { fileIndex, pdfFile ->
-                Log.d(TAG, "    merging file[" + fileIndex + "]: " + pdfFile.displayName)
+                Log.d(TAG, "    merging file[$fileIndex]: ${pdfFile.displayName}")
 
-                val fileDescriptor = context.contentResolver.openFileDescriptor(pdfFile.uri, "r")
-                    ?: throw IOException("Cannot open file: " + pdfFile.displayName)
+                val tempFile = copyToTempFile(pdfFile.uri, context)
+                tempFiles.add(tempFile)
 
-                val renderer = PdfRenderer(fileDescriptor)
-                for (pageIndex in 0 until renderer.pageCount) {
-                    val sourcePage = renderer.openPage(pageIndex)
+                var srcDoc: PDFDocument? = null
+                try {
+                    srcDoc = Document.openDocument(tempFile.absolutePath).asPDF()
+                    val pageCount = srcDoc.countPages()
+                    Log.d(TAG, "    source pages: $pageCount")
 
-                    // Calculate render resolution from native page size and device DPI
-                    val renderWidth = (sourcePage.width * deviceDpi) / 72
-                    val renderHeight = (sourcePage.height * deviceDpi) / 72
-
-                    // Render source page to bitmap at native resolution
-                    val bitmap = Bitmap.createBitmap(renderWidth, renderHeight, Bitmap.Config.ARGB_8888)
-                    sourcePage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-
-                    // Create a new page matching the source page dimensions
-                    val pageInfo = PdfDocument.PageInfo.Builder(renderWidth, renderHeight, currentPageIndex + 1).create()
-                    val page = mergedDoc.startPage(pageInfo)
-                    val canvas = page.canvas
-                    canvas.drawColor(android.graphics.Color.WHITE)
-                    canvas.drawBitmap(bitmap, 0f, 0f, null)
-                    mergedDoc.finishPage(page)
-
-                    sourcePage.close()
-                    currentPageIndex++
+                    for (pageIndex in 0 until pageCount) {
+                        newDoc!!.graftPage(totalPageCount, srcDoc, pageIndex)
+                        totalPageCount++
+                    }
+                } finally {
+                    srcDoc?.destroy()
                 }
-
-                renderer.close()
-                fileDescriptor.close()
             }
 
-            // Step 4: Write merged document to outputUri
+            Log.d(TAG, "    total pages merged: $totalPageCount")
+
+            // Save to a temp file (MuPDF save() requires a file path)
+            val saveTempFile = File(context.cacheDir, "merged_${UUID.randomUUID()}.pdf")
+            newDoc!!.save(saveTempFile.absolutePath, "pdf")
+
+            // Copy from temp file to output URI
             context.contentResolver.openOutputStream(outputUri)?.use { outputStream ->
-                mergedDoc.writeTo(outputStream)
+                saveTempFile.inputStream().copyTo(outputStream)
             }
-            mergedDoc.close()
 
-            // Get the actual file name from URI
             val fileName = getFileNameFromUri(outputUri, context)
-
-            Log.d(TAG, "=== merge SUCCESS: uri=" + outputUri.toString() + " ===")
+            Log.d(TAG, "=== merge SUCCESS: uri=$outputUri ===")
             return MergeResult(
                 success = true,
                 outputFileUri = outputUri,
@@ -101,22 +82,38 @@ class PdfMerger {
         } catch (e: Exception) {
             Log.e(TAG, "=== merge FAILED ===", e)
             return MergeResult(success = false, errorMessage = e.message ?: "Merge failed")
+        } finally {
+            newDoc?.destroy()
+            tempFiles.forEach { file ->
+                try {
+                    file.delete()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to delete temp: ${file.absolutePath}")
+                }
+            }
+            // Clean up save temp files
+            try {
+                context.cacheDir.listFiles { _, name -> name.startsWith("merged_") && name.endsWith(".pdf") }
+                    ?.forEach { it.delete() }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to clean up save temp: ${e.message}")
+            }
         }
     }
 
-    private fun getPageCount(uri: Uri, context: Context): Int {
-        return try {
-            val fd = context.contentResolver.openFileDescriptor(uri, "r")
-                ?: return 0
-            val renderer = PdfRenderer(fd)
-            val count = renderer.pageCount
-            renderer.close()
-            fd.close()
-            count
-        } catch (e: Exception) {
-            Log.w(TAG, "getPageCount failed: " + e.message)
-            0
+    private fun copyToTempFile(uri: Uri, context: Context): File {
+        val tempFile = File(context.cacheDir, "mupdf_${UUID.randomUUID()}.pdf")
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            FileOutputStream(tempFile).use { outputStream ->
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
+                }
+                outputStream.flush()
+            }
         }
+        return tempFile
     }
 
     private fun getFileNameFromUri(uri: Uri, context: Context): String {
@@ -129,7 +126,7 @@ class PdfMerger {
                 }
             }
         } catch (e: Exception) {
-            Log.w(TAG, "getFileNameFromUri: " + e.message)
+            Log.w(TAG, "getFileNameFromUri: ${e.message}")
         }
         return name
     }

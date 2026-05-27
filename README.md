@@ -28,7 +28,13 @@ PDF Adder 是一款 Android 工具 App，主要解决以下问题：
 
 ## 版本更新记录
 
-### v1.2（最新）
+### v1.3（最新）
+
+- 切换到 MuPDF 合并引擎，解决闪退、模糊、卡顿问题
+- 新增 MuPDF native 库（4 种 ABI）
+- 新增 Bug 报告 Excel 模板
+
+### v1.2
 
 - Material Design UI 改版
 - CardView 卡片列表首页
